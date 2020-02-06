@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+
+sed '/<!DOCTYPE/, /<\/tr>/d' | # delete header
+tr -d '?' | # deletes ? marks
+sed 's/<u>//g' | # replace all <u> tags with nothing
+sed 's/<\/u>//g' | # replace all </u> tags with nothing
+sed '/<hr/, /<\/html>/d' | # delete end of file
+tr '[:upper:]' '[:lower:]' | # make everything lower case
+sed "s/\`/\'/g" | # change the Hawaiian character ` into '
+sed 's/<td>//g' | # delete the <td> tags
+sed 's/<\/td>//g' | # delete the </td> tags
+sed 's/[, ]/\n/g' | # replace spaces, commas with \n
+grep "^[\spk\' mnwlhaeiou]\{1,\}$" | # remove every line with characters other than
+# those in the Hawaiian alphabet. Use the {1, }$ a single instance at an endline
+sort -u #sort and remove repeats 
+
+

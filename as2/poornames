@@ -1,0 +1,62 @@
+#!/usr/bin/bash
+
+declare -a val_files
+
+# This checks if a word is a duplicate. Case does not matter
+check_duplicate() {
+    w=$1
+    word="${w,,}"
+    for element in ${val_files[@]}; do
+	if [ $element == $word ] ; then
+	    return 1
+	fi
+    done
+    return 0
+}
+
+valid() {
+     arg1="$1"
+     arg2="$2"
+# checks if the second argument is empty    
+    if [ -z "$arg2" ] ; then
+	return 0
+    fi
+# Loops through files in directory
+    for filename in $arg2/*; do
+# checking if filename is a file or directory
+	if [ -d "${filename}" ] ; then
+	    if [ "$arg1" == "-r" ] ; then
+		valid $arg1 $filename
+	    valid $filename
+	    fi
+	    continue
+	fi
+# Now check if the filename obeys the rules
+        if [[ ! $filename =~ $arg2\/[_A-Za-z][A-Za-z_\.\-]{0,13}$ ]] ; then
+	    echo $filename
+# check if a file is a duplicate
+	elif  check_duplicate $filename ; then
+	    ar="${filename,,}"
+	    val_files+=( "$ar" )
+	else
+	    echo $filename
+	fi
+    done
+return 0
+}
+# check for two arguments, -r tag, and invalid directory
+if [ $# == 2 ] ; then
+    if [ "$1" != "-r" ] ; then
+	echo "Error: invalid arguments." >&2 
+	exit 1
+    fi
+elif [ $# == 0 ] ; then
+    valid na .
+elif [ $# == 1 ] ; then
+    if [ ! -d "$1" ] ; then
+	echo "Error: not a directory" >&2
+	exit 1
+    fi
+    valid na $1
+fi
+valid $1 $2

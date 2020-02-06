@@ -1,0 +1,96 @@
+
+I first use the command
+  $ locale
+which returns something other than LC_TYPE="C". 
+I then use the command
+  $ export LC_ALL='C' 
+to get to the correct locale. 
+
+Then I create the sorted words file:
+     $ sort /usr/share/dict/words > words
+
+I put the assignment page into a text file:
+  $ curl https://web.cs.ucla.edu/classes/winter20/cs35L/assign/assign2.html > as2.txt
+
+On as2.txt I run the given six commands in order to understand what each command is doing and how they differ from eachother.
+
+First command:
+   $ tr -c 'A-Za-z' '[\n*]' < as2.txt
+This command prints out all words that contain only letters A-Z and a-z with one or many newlines in between. It removes all words with characters other than those including numbers. The -c option uses the complement of a given set. In this case, the -c tag took all non uppercase/lowercase characters and replaced them with newlines. 
+
+Second command:
+       $ tr -cs 'A-Za-z' '[\n*]' < as2.txt
+This command does the same as the previous command, but it only does one newline between words instead of printing a newline for every non alphabetical character it finds. This is because the addition of -s instead of just -c squeezes repititions in set1 into a single character in set2, so each input sequence of a repeated character in the complement of set1 is replaced with a single newline. 
+
+Third command:
+      $ tr -cs 'A-Za-z' '[\n*]' < as2.txt | sort
+This command does the same thing as the previous command, but then applies the sort command to the result, so the output an alphabetically sorted list of words. 
+
+Fourth command:
+       $ tr -cs 'A-Za-z' '[\n*]' < as2.txt | sort -u
+This command is the same as the previous command with the addition of the -u tag on the sort command. The -u tag is the "unique" tag meaning that repeated words are removed from the sorted list. 
+
+Fifth command:
+      $ tr -cs 'A-Za-z' '[\n*]' < as2.txt | sort -u | comm - words
+This command takes the outputed words from the fourth command and compares them with all the words in the words file. The output is three columns. The first is lines exclusive to the first file. the second is lines exclusive to the second file. The third column is lines that appear in both files. 
+
+Sixth command:
+      $ tr -cs 'A-Za-z' '[\n*]' < as2.txt | sort -u | comm -23 - words # ENGLISHCHECKER
+This command is the same as the previous command except for the -23 tag which supresses the 2nd and 3rd columns from being printed. The output prints only words that are in file1, but not the words file, so this acts as a sort of english spell checker. The # ENGLISHCHECKER acts is a crude implementatin of an english spell checker. 
+
+Now I want to create a spell checker for Hawaiian.
+I use the command:
+  $ wget https://www.mauimapp.com/moolelo/hwnwdshw.htm
+to store the web page with the Hawaiian words.
+
+Then I create a script called buildwords to delete the non-Hawaiian words/characters
+in the document.
+
+I use the following command to make the file executable:
+  chmod u+x buildwords
+
+Hawaiian words are stored in the following form:
+‘A<tdX>W</td>Z’, where A and Z are zero or more spaces, X contains no ‘>’ characters and W consists of entirely Hawaiian characters or spaces. The Hawaiian alphabet consists of the following: p k ' m n w l h a e i o u
+
+I head buildwords with :
+#!/usr/bin/bash
+
+I start by deleting all of the beginning text before the Hawaiian words:
+  sed '/<!DOCTYPE/, /<\/tr>/d' |
+
+Then I get rid of the following: '?' '<u>' '</u>'
+     tr -d '?' |
+     sed 's/<u>//g' |
+     sed 's/<\/u>//g' |
+
+I delete the end of the file:
+sed '/<hr/, /<\/html>/d' |
+
+Change all the upper case letters into lower case:
+       tr '[:upper:]' '[:lower:]' |
+
+Change the Hawaiian alphabet specific character into an apostrophe:
+       sed "s/\`/\'/g" |
+
+Delete the <td> </td> tags
+       sed 's/<td>//g' |
+       sed 's/<\/td>//g' |
+
+replace spaces and commas with newlines
+	sed 's/[, ]/\n/g' |
+
+Finally, remove every line that has characters other than whitespace or characters in the Hawaiian alphabet. Match a single word per line and make sure the word ends with an end of line character.
+	 grep "^[\spk\' mnwlhaeiou]\{1,\}$" |
+
+Then sort alphabetically, removing all duplicates:
+     sort -u
+
+Now I want to create a HAWAIIANCHECKER like I did for ENGLISHCHECKER
+
+I create the dictionary hwords:
+  	 $ cat hwnwdshw.htm | buildwords > hwords
+
+Now I use hwords as a hawaiian spell checker on as2.txt. I making everything into lower case because all of the dictionary words are lowercase.  
+
+    $ tr '[:upper:]' '[:lower:]' < as2.txt | tr -cs "pk\'mnwlhaeiou" '[\n*]' | sort -u | comm -23 - hwords | wc
+This command returns 221 220 961

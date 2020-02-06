@@ -1,0 +1,157 @@
+#!/usr/bin/python
+
+import argparse, sys, random
+from optparse import OptionParser
+
+class shuffle:
+    def __init__(self, linearr, filename, low, hi, lowHi):
+        # lowHi is bool
+#        self.linearr = linearr
+        self.filename = filename
+        self.low = low
+        self.hi = hi
+        self.lowHi = lowHi
+        self.retArr = []
+
+        if filename == "-" or filename == "nofi":
+            self.retArr = linearr    
+        elif lowHi:
+            while low <= hi:
+                self.retArr.append(hi)
+                hi = hi - 1
+        else:
+            f = open(filename, 'r')
+            self.retArr = f.readlines()
+            f.close()
+
+    def printNums(self, low, hi):
+        l = int(low)
+        h = int(hi)
+        numarr = []
+        while l <= h:
+            numarr.append(l)
+            l = l + 1
+        random.shuffle(numarr)
+        for i in numarr:
+            sys.stdout.write(str(i))
+            sys.stdout.write("\n")
+
+    def rmRand(self):
+        if len(self.retArr) == 0:
+            return ""
+        rand = random.choice(self.retArr)
+        self.retArr.remove(rand)
+        return rand
+
+    def selectRand(self):
+        if len(self.retArr) == 0:
+            return ""
+        return random.choice(self.retArr)
+
+
+def main():
+
+    version_msg = "%prog 2.0"
+    usage_msg = """%prog [OPTION]... FILE
+
+Output randomly selected lines from FILE."""
+
+    parser = OptionParser(version=version_msg,
+                          usage=usage_msg)
+    parser.add_option("-n", "--numlines",
+                      action="store", dest="numlines", default=1,
+                      help="output NUMLINES lines (default 1)")
+    parser.add_option("-r", "--repeat", action="store_true", dest="rep", default=False,
+                     help="repeat output lines")
+    parser.add_option("-i", "--input-range", action="store", dest="lowHi", help="input-range=LO-HI- treat each number LO through HI as an input line")
+
+    options, args = parser.parse_args(sys.argv[1:])
+
+
+
+# -n option
+    try:
+        numlines = int(options.numlines)
+    except:
+        parser.error("invalid NUMLINES: {0}".
+                     format(options.numlines))
+    if numlines < 0:
+        parser.error("negative count: {0}".
+                     format(numlines))
+    
+# -i option
+    low = 0
+    hi = 0
+    if options.lowHi:
+        try:
+            range=options.lowHi.split("-")
+            if len(range) > 2:
+                parser.error("invalid input range " + "'" + str(options.lowHi) +
+                            "'")
+            low = int(range[0])
+            hi = int(range[1])
+        except:
+            parser.error("invalid input range " +"'" + str(options.lowHi) +
+                        "'")
+    if low > hi:
+        parser.error("invalid input range " + "'" + str(options.lowHi) + 
+                    "'")
+#    if len(range) > 2:
+#        parser.error("invalid input range " + "'" + str(options.lowHi) +
+#                    "'")
+    
+
+    if len(args) > 1:
+        parser.error("extra operand " + "'" + args[1] + "'")
+
+    filename = ""
+    if len(args) > 0:
+        filename = args[0]
+    else: 
+        filename = "nofi"
+
+    if (len(args) > 0) and options.lowHi:
+        parser.error("Segmentation fault")
+
+    lines = 1
+    if options.numlines:
+        lines = numlines
+    if options.lowHi:
+        lines = int(hi) - int(low) + 1
+    linearr = []
+    if not options.lowHi:
+        if filename == "-" or filename == "nofi":
+            linearr = sys.stdin.readlines()
+            lines = len(linearr)
+        else:
+            f = open(filename, 'r')
+            linearr = f.readlines()
+            f.close()
+            lines = len(linearr)
+
+
+    if options.numlines != 1:
+        lines = numlines
+
+    instance = shuffle(linearr, filename, low, hi, options.lowHi)
+
+    if options.rep:
+        if lines == 1:
+            lines = 9999999999
+
+    index = 0
+    if options.lowHi:
+        instance.printNums(low, hi)
+        return
+    if options.rep:
+        while index < lines:
+            sys.stdout.write(instance.selectRand())
+            index = index + 1
+    else:
+        while index <= lines:
+        
+            sys.stdout.write(instance.rmRand())
+            index = index + 1
+
+if __name__ == '__main__':
+    main()

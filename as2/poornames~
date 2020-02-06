@@ -1,0 +1,75 @@
+#!/usr/bin/bash
+
+declare -a val_files
+
+check_duplicate() {
+#    arr=$1
+    w=$1
+    word="${w,,}"
+#    echo "'$w' here is w"
+#   echo "word to be checked if duplicate ::: '$word'"
+    for element in ${val_files[@]}; do
+#	echo $element
+	if [ $element == $word ] ; then
+#	    echo "'$element' is the same as '$w'"
+#	    echo $w
+	    return 1
+	fi
+    done
+    return 0
+}
+
+valid() {
+#    declare -a val_files
+#    val_files[0]="abcabc.txt"
+     arg1="$1"
+     arg2="$2"
+#    if [ $# == 0 ] ; then
+#	arg1="."
+#    fi
+    
+    
+    for filename in $arg2/*; do
+# checking if filename is a file or directory
+	if [ -d "${filename}" ] ; then
+	    if [ "$arg1" == "-r" ] ; then
+		echo "'$filename' is a directory"
+		valid "-r" $filename
+		continue
+	    fi
+	fi
+
+
+#	echo "now starting loop of : '$filename'"
+        if [[ ! $filename =~ $arg2\/[_A-Za-z][A-Za-z_\.\-]{0,13}$ ]] ; then
+#	    echo "printed out because it is invalid on its own: '$filename'"
+	    echo $filename
+	elif  check_duplicate $filename ; then
+#	    echo "adding before changing : '$filename'"
+	    ar="${filename,,}"
+	    val_files+=( "$ar" )
+#	    echo "adding to val_files : : : '$ar'"
+	else
+	    echo $filename
+#	    echo "Printing in final else statement: '$filename'"
+	fi
+    done
+    exit 0
+}
+
+
+if [ $# == 2 ] ; then
+    if [ "$1" != "-r" ] ; then
+	echo "Error: invalid arguments." >&2 
+	exit 1
+    fi
+elif [ $# == 0 ] ; then
+    valid .
+elif [ $# == 1 ] ; then
+    if [ ! -d "$1" ] ; then
+	echo "Error: not a directory" >&2
+	exit 1
+    fi
+    valid "blank" $1
+fi
+valid $1 $2

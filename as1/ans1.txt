@@ -1,0 +1,90 @@
+1. What shell command uses the man program to print all the commands that have a specific word in their man page (or at least the description part of the man page)? (hint: man man)
+
+man -k find
+
+2. Where are the mv and sh programs located in the file system? List any shell commands you used to answer this question.
+
+/bin/mv, which mv, /bin/sh, which sh
+
+3. What executable programs in /usr/bin have names that are exactly two characters long and end in r, and what do they do? List any shell commands you used to answer this question.
+
+man -k ^.r$
+
+4. When you execute the command named by the symbolic link /usr/bin/emacs, which file actually is executed? List any shell commands you used to answer this question.
+
+When I execute the command /usr/bin/emacs it is the same as running the executable file emacs which is stored in /usr/bin. 
+
+5. What is the version number of the /usr/bin/gcc program? of the plain gcc program? Why are they different programs?
+
+I used gcc -v and /usr/bin/gcc -v to check the version numbers of both programs. 
+the version number of /usr/bin/gcc was 4.8.5 and the version number of the plain gcc program was 4.8.5. I then used which gcc
+and found that the executable gcc is located in /usr/lib64/ccache/gcc which is different from /usr/bin/gcc. The usr/bin/gcc is 
+an older version while /usr/lib64/ccache/gcc is the one currently used on my seasnet. 
+
+6. The chmod program changes permissions on a file. What does the symbolic mode u+sx,o-w mean, in terms of permissions?
+
++ is used to add a permission while - is used to remove a permission. So, u+sx gives the user permission to execute and sets the
+group and user id. The o-w removes permission to write for the owner. 
+
+7. Use the find command to find all directories modified in the last four weeks that are located under (or are the same as) the directory /usr/local/cs. List any shell commands you used to answer this question.
+
+First I used man find to figure out what option would let me locate these files. I used -type d to specify directories and -mtime2
+28 because 28 * 24 is equal to 4 weeks. Then I added the directory so the whole command was man find usr/local/cs -type d -mtime
+28. No directories were modified within the last 4 weeks. 
+
+8. Of the files in the same directory as find, how many of them are symbolic links? List any shell commands you used to answer this question.
+
+I first used $ cd /usr/bin to navigate to the correct directory. Then I used the command $ ls -l | grep ^l | wc to count the number of files that are symbolic links, and the result was : 
+  303    3333   24180. 
+
+9. What is the oldest regular file in the /usr/lib64 directory? Use the last-modified time to determine age. Specify the name of the file without the /usr/lib64/ prefix. Consider files whose names start with ".". List any shell commands you used to answer this question.
+
+First I navigated into the /usr/lib64 directory using $ cd usr/lib64. Then I used the command ls -t to sort by last modified time and the last file modified was librom1394.so.0.3.0
+
+10. Where does the locale command get its data from? List any shell commands you used to answer this question.
+
+I first used $ man locale. Then I used $ whereis locale which gave the locations of the files for the locale command. 
+locale: /usr/bin/locale /usr/lib/locale /etc/locale.conf /usr/include/locale.h /usr/share/locale /usr/share/man/man7/locale.7.gz /usr/share/man/man3/locale.3pm.gz /usr/share/man/man5/locale.5.gz /usr/share/man/man1p/locale.1p.gz
+
+11. In Emacs, what commands have downcase in their name? List any Emacs commands you used to answer this question.
+
+Fist I used $ emacs to open emacs. then I typed C-h, the get-help function. Then I typed downcase to search for the commands with a downcase in their name. 
+
+12. Briefly, what do the Emacs keystrokes C-M-r through C-M-v do? Can you list their actions concisely? List any Emacs commands you used to answer this question.
+
+I first opened emacs using $ emacs. Then I typed C-h ? to open up the help menu. I then typed c to select CODING. 
+Then I typed the given keystrokes. 
+C-M-r:	C-M-r runs the command isearch-backward-regexp
+C-M-s: C-M-s runs the command isearch-forward-regrexp
+C-M-t: C-M-t runs the command transpose-sexps
+C-M-u: C-M-u runs the command backward-up-list
+C-M-v: C-M-v runs the command scroll-other-window
+
+13. In more detail, what does the Emacs keystroke C-g do? List any Emacs commands you used to answer this question.
+
+I did the same thing as for the previous question. $ emacs. Then I opened the get-help menu with C-h and selected c CODING. Then I searched C-g: C-g runs the command keyboard-quit. I also searched C-g through the functions menu found this:
+keyboard-quit is an interactive compiled Lisp function.
+
+It is bound to C-g.
+
+(keyboard-quit)
+
+Signal a `quit' condition.
+During execution of Lisp code, this character causes a quit directly.
+At top-level, as an editor command, this simply beeps.
+
+14. What does the Emacs yank function do, and how can you easily invoke it using keystrokes? List any Emacs commands you used to answer this question.
+
+I used $ emacs to open emacs. Then I used C-h f yank to open the description of the yank function:
+yank is an interactive compiled Lisp function.
+
+It is bound to C-y meaning that it can be called by typing C-y. 
+
+15. When looking at the directory /usr/bin, what's the difference between the output of the ls -l command, and the directory listing of the Emacs dired command? List any shell or Emacs commands you used to answer this question.
+
+first I used $ cd /usr/bin to enter the bin directory. Then I typed $ ls -l, which listed everything in the bin directory in long form. Then I opened emacs using $ emacs, C-h d dired: 
+In Dired, you are "editing" a list of the files in a directory and
+  (optionally) its subdirectories, in the format of `ls -lR'. 
+
+The difference is that the dired command can optionally also show the subdirectories, unlike the ls -l command. 
+

@@ -1,0 +1,104 @@
+William Baumbacher
+
+First, I download the tar using the wget command: 
+       $ wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz
+
+Then I need to verify its signiture so I download:
+     $ wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz.sig
+     $ wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
+
+Then I verify its signature using the command:
+     $ gpg --verify --keyring ./gnu-keyring.gpg coreutils-8.29.tar.xz.sig
+which returns the following:
+
+gpg: Signature made Wed 27 Dec 2017 10:29:05 AM PST using RSA key ID 306037D9
+gpg: /u/eng/class/classwba/.gnupg/trustdb.gpg: trustdb created
+gpg: Good signature from "Pádraig Brady <P@draigBrady.com>"
+gpg:                 aka "Pádraig Brady <pbrady@redhat.com>"
+gpg:                 aka "Pádraig Brady <pixelbeat@gnu.org>"
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: 6C37 DC12 121A 5006 BC1D  B804 DF6F D971 3060 37D9
+
+This verification may not have worked because the signature of the key downloaded is
+not trusted.
+
+Now I unzip the tar file:
+    $ tar -xvf coreutils-8.29.tar.xz
+which creates the directory with my files: coreutils-8.29
+
+I use the command 
+    $ cat INSTALL
+to figure out how to make and install.
+
+As specified, I use the following shell command to configure, build and install the package:
+    $ ./configure && make && make install
+Which takes a while to finish. I get the following errors:
+
+src/ginstall: cannot create regular file '/usr/local/bin/./install': Permission denied
+make[3]: *** [install-binPROGRAMS] Error 1
+make[3]: Leaving directory `/w/home.20/class/classwba/Documents/35l/as3/coreutils-8.29'
+make[2]: *** [install-am] Error 2
+make[2]: Leaving directory `/w/home.20/class/classwba/Documents/35l/as3/coreutils-8.29'
+make[1]: *** [install-recursive] Error 1
+make[1]: Leaving directory `/w/home.20/class/classwba/Documents/35l/as3/coreutils-8.29'
+make: *** [install] Error 2
+
+In my first attempt I forgot about --prefix so I run:
+   $ ./configure --prefix=/u/eng/class/classwba/Documents/35l/as3/UtilsInstall
+   $ make
+   $ make install
+This worked with no errors.
+I then navigate into the direcotry UtilsInstall which contains three other 
+directories: bin, libexec, share
+I enter the bin directory and test the ls command to diagnose the problem:
+  $ ls -a -A -l
+which prints out:
+
+drwxr-xr-x 2 classwba class   8192 Feb  1 13:22 .
+drwxr-xr-x 5 classwba class   4096 Feb  1 13:22 ..
+-rwxr-xr-x 1 classwba class 186744 Feb  1 13:22 [
+-rwxr-xr-x 1 classwba class 286368 Feb  1 13:22 b2sum
+-rwxr-xr-x 1 classwba class 179016 Feb  1 13:22 base32
+-rwxr-xr-x 1 classwba class 178096 Feb  1 13:22 base64
+-rwxr-xr-x 1 classwba class 142168 Feb  1 13:22 basename
+-rwxr-xr-x 1 classwba class 164608 Feb  1 13:22 cat
+-rwxr-xr-x 1 classwba class 294272 Feb  1 13:22 chcon
+-rwxr-xr-x 1 classwba class 286792 Feb  1 13:22 chgrp
+-rwxr-xr-x 1 classwba class 267416 Feb  1 13:22 chmod
+.....
+We can see here that it is showing . and .. which it should not do.
+
+I create a patch file within coreutils-8.29 and copy and paste the contents of the patch from Bug#30963 message #10. I apply the patch using the following command
+  $ patch -w -p1 < patch.diff
+It outputs: 
+patching file NEWS
+Hunk #1 FAILED at 4.
+1 out of 1 hunk FAILED -- saving rejects to file NEWS.rej
+patching file src/ls.c
+Hunk #1 succeeded at 1900 (offset -3 lines).
+patching file tests/local.mk
+Hunk #1 FAILED at 575.
+1 out of 1 hunk FAILED -- saving rejects to file tests/local.mk.rej
+patching file tests/ls/a-option.sh
+patch unexpectedly ends in middle of line
+
+This still works because the file we needed to patch succeeded.
+Now I reconfigure and remake in case anything else was changed:
+    $ autoreconf -f
+    $ make 
+Now we can check the ls command in the same directory as before to see if the patch changed the output:
+    $ ls -a -A -l
+
+-rwxr-xr-x 1 classwba class 186744 Feb  1 13:22 [
+-rwxr-xr-x 1 classwba class 286368 Feb  1 13:22 b2sum
+-rwxr-xr-x 1 classwba class 179016 Feb  1 13:22 base32
+-rwxr-xr-x 1 classwba class 178096 Feb  1 13:22 base64
+-rwxr-xr-x 1 classwba class 142168 Feb  1 13:22 basename
+-rwxr-xr-x 1 classwba class 164608 Feb  1 13:22 cat
+-rwxr-xr-x 1 classwba class 294272 Feb  1 13:22 chcon
+-rwxr-xr-x 1 classwba class 286792 Feb  1 13:22 chgrp
+....
+
+We can see that the . and .. files are gone. This means that the -A command is now 
+overriding the -a command as it should. The patch was successful. 
