@@ -42,9 +42,16 @@ Now I want to reproduce the problem. To do this I run the code given in the spec
     $ touch -d '1918-11-11 11:00 GMT' wwi-armistice-cs35L
     $ touch now
     $ sleep 1
-    $ TZ=UTC0 ls -lt --full-time wwi-armistice-cs35L now now1
-    -rw-r--r-- 1 eggert csfac 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice-cs35L
-    -rw-r--r-- 1 eggert csfac 0 2018-10-29 16:43:16.805404419 +0000 now1
-    -rw-r--r-- 1 eggert csfac 0 2018-10-29 16:43:15.801376773 +0000 now
+    $ touch now1
+    $ TZ=UTC0 /u/eng/class/classwba/Documents/35l/as4/coreutils-with-bug/src/ls
+    -lt --full-time wwi-armistice-cs35L now now1
+    
+-rw-r--r-- 1 classwba class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice-cs35L
+-rw-r--r-- 1 classwba class 0 2020-02-09 04:08:53.732693105 +0000 now1
+-rw-r--r-- 1 classwba class 0 2020-02-09 04:08:43.464513143 +0000 now
     $ cd
     $ rm -fr $tmp
+We can see the bug from the output above. The -t tag should sort files by time last
+modified, most recent first, but the output reversed the order, printing the oldest
+files first.
+
