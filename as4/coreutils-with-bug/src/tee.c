@@ -31,7 +31,7 @@
 
 #define AUTHORS "Mike Parker", "Richard M. Stallman", "David MacKenzie"
 
-static bool tee (int nfiles, const char **files);
+static bool coreutils_tee (int nfiles, const char **files);
 
 /* If true, append to output files rather than truncating them. */
 static bool append;
@@ -121,7 +121,7 @@ main (int argc, char **argv)
   /* Do *not* warn if tee is given no file arguments.
      POSIX requires that it work when given no arguments.  */
 
-  ok = tee (argc - optind, (const char **) &argv[optind]);
+  ok = coreutils_tee (argc - optind, (const char **) &argv[optind]);
   if (close (STDIN_FILENO) != 0)
     error (EXIT_FAILURE, errno, _("standard input"));
 
@@ -133,7 +133,7 @@ main (int argc, char **argv)
    Return true if successful.  */
 
 static bool
-tee (int nfiles, const char **files)
+coreutils_tee (int nfiles, const char **files)
 {
   FILE **descriptors;
   char buffer[BUFSIZ];

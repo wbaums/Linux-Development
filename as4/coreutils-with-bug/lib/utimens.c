@@ -71,7 +71,7 @@ struct utimbuf
    Return 0 on success, -1 (setting errno) on failure.  */
 
 int
-futimens (int fd ATTRIBUTE_UNUSED,
+coreutils_futimens (int fd ATTRIBUTE_UNUSED,
 	  char const *file, struct timespec const timespec[2])
 {
   /* There's currently no interface to set file timestamps with
@@ -160,5 +160,5 @@ futimens (int fd ATTRIBUTE_UNUSED,
 int
 utimens (char const *file, struct timespec const timespec[2])
 {
-  return futimens (-1, file, timespec);
+  return coreutils_futimens (-1, file, timespec);
 }

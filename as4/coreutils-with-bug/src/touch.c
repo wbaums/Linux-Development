@@ -182,7 +182,7 @@ touch (const char *file)
       t = timespec;
     }
 
-  ok = (futimens (fd, (fd == STDOUT_FILENO ? NULL : file), t) == 0);
+  ok = (coreutils_futimens (fd, (fd == STDOUT_FILENO ? NULL : file), t) == 0);
 
   if (fd == STDIN_FILENO)
     {
