@@ -1,1 +1,5 @@
-# dummy
+sha1sum.o: sha1sum.c /usr/include/stdc-predef.h checksum.h
+
+/usr/include/stdc-predef.h:
+
+checksum.h:

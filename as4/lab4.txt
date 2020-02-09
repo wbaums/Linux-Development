@@ -1,14 +1,13 @@
 William Baumbacher
 lab 4 log
 
-I begin by downloading the tar file "coreutils-with-bug.tar" onto my computer.
-I make it into a folder and add it into my lab 4 directory using cyberduck.
-Then I navigate into the directory coreutils-with-bug and try to configure:
-     $ ./configure
-Permission is denied so I have to change the permissions to allow execution:
-     $ chmod u+x configure
+I begin by downloading the coreutils tar to my directory:
+  $ wget http://web.cs.ucla.edu/classes/winter20/cs35L/assign/coreutils-with-bug.tar.gz
+I unzip it:
+  $ tar -xvzf coreutils-with-bug.tar.gz
+
 Now I configure and try to make, make install:
-    $ ./configure
+    $ ./configure --prefix=/u/eng/class/classwba/Documents/35l/as4/coreutils-with-bug
     $ make
 When I run the make command I get an error:
 
@@ -25,3 +24,27 @@ In file included from utimecmp.h:25,
 This error can be resolved by installing the patch.
      $ wget http://web.cs.ucla.edu/classes/winter20/cs35L/assign/coreutils.diff
      $ patch -p0 < coreutils.diff
+
+patching file lib/utimens.c
+patching file lib/utimens.h
+patching file src/copy.c
+patching file src/tee.c
+patching file src/touch.c
+
+The patch installs successfully. Now I make and install:
+    $ make
+    $ make install
+This is successful.
+
+Now I want to reproduce the problem. To do this I run the code given in the spec:
+    $ tmp=$(mktemp -d)
+    $ cd $tmp
+    $ touch -d '1918-11-11 11:00 GMT' wwi-armistice-cs35L
+    $ touch now
+    $ sleep 1
+    $ TZ=UTC0 ls -lt --full-time wwi-armistice-cs35L now now1
+    -rw-r--r-- 1 eggert csfac 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice-cs35L
+    -rw-r--r-- 1 eggert csfac 0 2018-10-29 16:43:16.805404419 +0000 now1
+    -rw-r--r-- 1 eggert csfac 0 2018-10-29 16:43:15.801376773 +0000 now
+    $ cd
+    $ rm -fr $tmp

@@ -1,9 +1,6 @@
 /* config.h.  Generated from config.hin by configure.  */
 /* config.hin.  Generated from configure.ac by autoheader.  */
 
-/* Define if building universal (internal helper macro) */
-/* #undef AC_APPLE_UNIVERSAL_BUILD */
-
 /* Define if you have the Andrew File System. */
 /* #undef AFS */
 
@@ -620,10 +617,6 @@
 /* Define if you have the 'long double' type. */
 #define HAVE_LONG_DOUBLE 1
 
-/* Define to 1 if the type `long double' works and has more range or precision
-   than `double'. */
-#define HAVE_LONG_DOUBLE_WIDER 1
-
 /* Define to 1 if you support file names longer than 14 characters. */
 #define HAVE_LONG_FILE_NAMES 1
 
@@ -909,140 +902,140 @@
    headers. */
 #define HAVE_STRUCT_DIRENT_D_TYPE 1
 
-/* Define to 1 if `f_fstypename' is a member of `struct fsstat'. */
+/* Define to 1 if `f_fstypename' is member of `struct fsstat'. */
 /* #undef HAVE_STRUCT_FSSTAT_F_FSTYPENAME */
 
-/* Define to 1 if `n_un.n_name' is a member of `struct nlist'. */
+/* Define to 1 if `n_un.n_name' is member of `struct nlist'. */
 /* #undef HAVE_STRUCT_NLIST_N_UN_N_NAME */
 
-/* Define to 1 if `sp_pwdp' is a member of `struct spwd'. */
+/* Define to 1 if `sp_pwdp' is member of `struct spwd'. */
 #define HAVE_STRUCT_SPWD_SP_PWDP 1
 
-/* Define to 1 if `f_basetype' is a member of `struct statfs'. */
+/* Define to 1 if `f_basetype' is member of `struct statfs'. */
 /* #undef HAVE_STRUCT_STATFS_F_BASETYPE */
 
-/* Define to 1 if `f_fsid.__val' is a member of `struct statfs'. */
+/* Define to 1 if `f_fsid.__val' is member of `struct statfs'. */
 #define HAVE_STRUCT_STATFS_F_FSID___VAL 1
 
-/* Define to 1 if `f_fstypename' is a member of `struct statfs'. */
+/* Define to 1 if `f_fstypename' is member of `struct statfs'. */
 /* #undef HAVE_STRUCT_STATFS_F_FSTYPENAME */
 
-/* Define to 1 if `f_namelen' is a member of `struct statfs'. */
+/* Define to 1 if `f_namelen' is member of `struct statfs'. */
 #define HAVE_STRUCT_STATFS_F_NAMELEN 1
 
-/* Define to 1 if `f_namemax' is a member of `struct statfs'. */
+/* Define to 1 if `f_namemax' is member of `struct statfs'. */
 /* #undef HAVE_STRUCT_STATFS_F_NAMEMAX */
 
-/* Define to 1 if `f_type' is a member of `struct statfs'. */
+/* Define to 1 if `f_type' is member of `struct statfs'. */
 #define HAVE_STRUCT_STATFS_F_TYPE 1
 
-/* Define to 1 if `f_basetype' is a member of `struct statvfs'. */
+/* Define to 1 if `f_basetype' is member of `struct statvfs'. */
 /* #undef HAVE_STRUCT_STATVFS_F_BASETYPE */
 
-/* Define to 1 if `f_fsid.__val' is a member of `struct statvfs'. */
+/* Define to 1 if `f_fsid.__val' is member of `struct statvfs'. */
 /* #undef HAVE_STRUCT_STATVFS_F_FSID___VAL */
 
-/* Define to 1 if `f_namelen' is a member of `struct statvfs'. */
+/* Define to 1 if `f_namelen' is member of `struct statvfs'. */
 /* #undef HAVE_STRUCT_STATVFS_F_NAMELEN */
 
-/* Define to 1 if `f_namemax' is a member of `struct statvfs'. */
+/* Define to 1 if `f_namemax' is member of `struct statvfs'. */
 #define HAVE_STRUCT_STATVFS_F_NAMEMAX 1
 
-/* Define to 1 if `f_type' is a member of `struct statvfs'. */
+/* Define to 1 if `f_type' is member of `struct statvfs'. */
 /* #undef HAVE_STRUCT_STATVFS_F_TYPE */
 
-/* Define to 1 if `st_atimensec' is a member of `struct stat'. */
+/* Define to 1 if `st_atimensec' is member of `struct stat'. */
 /* #undef HAVE_STRUCT_STAT_ST_ATIMENSEC */
 
-/* Define to 1 if `st_atimespec.tv_nsec' is a member of `struct stat'. */
+/* Define to 1 if `st_atimespec.tv_nsec' is member of `struct stat'. */
 /* #undef HAVE_STRUCT_STAT_ST_ATIMESPEC_TV_NSEC */
 
-/* Define to 1 if `st_atim.st__tim.tv_nsec' is a member of `struct stat'. */
+/* Define to 1 if `st_atim.st__tim.tv_nsec' is member of `struct stat'. */
 /* #undef HAVE_STRUCT_STAT_ST_ATIM_ST__TIM_TV_NSEC */
 
-/* Define to 1 if `st_atim.tv_nsec' is a member of `struct stat'. */
+/* Define to 1 if `st_atim.tv_nsec' is member of `struct stat'. */
 #define HAVE_STRUCT_STAT_ST_ATIM_TV_NSEC 1
 
-/* Define to 1 if `st_author' is a member of `struct stat'. */
+/* Define to 1 if `st_author' is member of `struct stat'. */
 /* #undef HAVE_STRUCT_STAT_ST_AUTHOR */
 
-/* Define to 1 if `st_blksize' is a member of `struct stat'. */
+/* Define to 1 if `st_blksize' is member of `struct stat'. */
 #define HAVE_STRUCT_STAT_ST_BLKSIZE 1
 
-/* Define to 1 if `st_blocks' is a member of `struct stat'. */
+/* Define to 1 if `st_blocks' is member of `struct stat'. */
 #define HAVE_STRUCT_STAT_ST_BLOCKS 1
 
-/* Define to 1 if `st_spare1' is a member of `struct stat'. */
+/* Define to 1 if `st_spare1' is member of `struct stat'. */
 /* #undef HAVE_STRUCT_STAT_ST_SPARE1 */
 
 /* Define if struct timespec is declared in <time.h>. */
 #define HAVE_STRUCT_TIMESPEC 1
 
-/* Define to 1 if `tm_zone' is a member of `struct tm'. */
+/* Define to 1 if `tm_zone' is member of `struct tm'. */
 #define HAVE_STRUCT_TM_TM_ZONE 1
 
 /* Define if struct utimbuf is declared -- usually in <utime.h>. Some systems
    have utime.h but don't declare the struct anywhere. */
 #define HAVE_STRUCT_UTIMBUF 1
 
-/* Define to 1 if `ut_exit' is a member of `struct utmpx'. */
+/* Define to 1 if `ut_exit' is member of `struct utmpx'. */
 #define HAVE_STRUCT_UTMPX_UT_EXIT 1
 
-/* Define to 1 if `ut_exit.e_exit' is a member of `struct utmpx'. */
+/* Define to 1 if `ut_exit.e_exit' is member of `struct utmpx'. */
 #define HAVE_STRUCT_UTMPX_UT_EXIT_E_EXIT 1
 
-/* Define to 1 if `ut_exit.e_termination' is a member of `struct utmpx'. */
+/* Define to 1 if `ut_exit.e_termination' is member of `struct utmpx'. */
 #define HAVE_STRUCT_UTMPX_UT_EXIT_E_TERMINATION 1
 
-/* Define to 1 if `ut_exit.ut_exit' is a member of `struct utmpx'. */
+/* Define to 1 if `ut_exit.ut_exit' is member of `struct utmpx'. */
 /* #undef HAVE_STRUCT_UTMPX_UT_EXIT_UT_EXIT */
 
-/* Define to 1 if `ut_exit.ut_termination' is a member of `struct utmpx'. */
+/* Define to 1 if `ut_exit.ut_termination' is member of `struct utmpx'. */
 /* #undef HAVE_STRUCT_UTMPX_UT_EXIT_UT_TERMINATION */
 
-/* Define to 1 if `ut_id' is a member of `struct utmpx'. */
+/* Define to 1 if `ut_id' is member of `struct utmpx'. */
 #define HAVE_STRUCT_UTMPX_UT_ID 1
 
-/* Define to 1 if `ut_name' is a member of `struct utmpx'. */
+/* Define to 1 if `ut_name' is member of `struct utmpx'. */
 #define HAVE_STRUCT_UTMPX_UT_NAME 1
 
-/* Define to 1 if `ut_pid' is a member of `struct utmpx'. */
+/* Define to 1 if `ut_pid' is member of `struct utmpx'. */
 #define HAVE_STRUCT_UTMPX_UT_PID 1
 
-/* Define to 1 if `ut_type' is a member of `struct utmpx'. */
+/* Define to 1 if `ut_type' is member of `struct utmpx'. */
 #define HAVE_STRUCT_UTMPX_UT_TYPE 1
 
-/* Define to 1 if `ut_user' is a member of `struct utmpx'. */
+/* Define to 1 if `ut_user' is member of `struct utmpx'. */
 #define HAVE_STRUCT_UTMPX_UT_USER 1
 
-/* Define to 1 if `ut_exit' is a member of `struct utmp'. */
+/* Define to 1 if `ut_exit' is member of `struct utmp'. */
 #define HAVE_STRUCT_UTMP_UT_EXIT 1
 
-/* Define to 1 if `ut_exit.e_exit' is a member of `struct utmp'. */
+/* Define to 1 if `ut_exit.e_exit' is member of `struct utmp'. */
 #define HAVE_STRUCT_UTMP_UT_EXIT_E_EXIT 1
 
-/* Define to 1 if `ut_exit.e_termination' is a member of `struct utmp'. */
+/* Define to 1 if `ut_exit.e_termination' is member of `struct utmp'. */
 #define HAVE_STRUCT_UTMP_UT_EXIT_E_TERMINATION 1
 
-/* Define to 1 if `ut_exit.ut_exit' is a member of `struct utmp'. */
+/* Define to 1 if `ut_exit.ut_exit' is member of `struct utmp'. */
 /* #undef HAVE_STRUCT_UTMP_UT_EXIT_UT_EXIT */
 
-/* Define to 1 if `ut_exit.ut_termination' is a member of `struct utmp'. */
+/* Define to 1 if `ut_exit.ut_termination' is member of `struct utmp'. */
 /* #undef HAVE_STRUCT_UTMP_UT_EXIT_UT_TERMINATION */
 
-/* Define to 1 if `ut_id' is a member of `struct utmp'. */
+/* Define to 1 if `ut_id' is member of `struct utmp'. */
 #define HAVE_STRUCT_UTMP_UT_ID 1
 
-/* Define to 1 if `ut_name' is a member of `struct utmp'. */
+/* Define to 1 if `ut_name' is member of `struct utmp'. */
 #define HAVE_STRUCT_UTMP_UT_NAME 1
 
-/* Define to 1 if `ut_pid' is a member of `struct utmp'. */
+/* Define to 1 if `ut_pid' is member of `struct utmp'. */
 #define HAVE_STRUCT_UTMP_UT_PID 1
 
-/* Define to 1 if `ut_type' is a member of `struct utmp'. */
+/* Define to 1 if `ut_type' is member of `struct utmp'. */
 #define HAVE_STRUCT_UTMP_UT_TYPE 1
 
-/* Define to 1 if `ut_user' is a member of `struct utmp'. */
+/* Define to 1 if `ut_user' is member of `struct utmp'. */
 #define HAVE_STRUCT_UTMP_UT_USER 1
 
 /* Define to 1 if you have the `strverscmp' function. */
@@ -1383,9 +1376,6 @@
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "coreutils"
 
-/* Define to the home page for this package. */
-#define PACKAGE_URL "http://www.gnu.org/software/coreutils/"
-
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "5.93"
 
@@ -1412,9 +1402,14 @@
 /* the value to which errno is set when rmdir fails on a nonempty directory */
 #define RMDIR_ERRNO_NOT_EMPTY 39
 
+/* Define to 1 if the `setvbuf' function takes the buffering type as its
+   second argument and the buffer pointer as the third, as on System V before
+   release 3. */
+/* #undef SETVBUF_REVERSED */
+
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
-   automatically deduced at runtime.
+   automatically deduced at run-time.
 	STACK_DIRECTION > 0 => grows toward higher addresses
 	STACK_DIRECTION < 0 => grows toward lower addresses
 	STACK_DIRECTION = 0 => direction of growth unknown */
@@ -1497,28 +1492,6 @@
 /* Define to 1 if unlink (dir) cannot possibly succeed. */
 #define UNLINK_CANNOT_UNLINK_DIR 1
 
-/* Enable extensions on AIX 3, Interix.  */
-#ifndef _ALL_SOURCE
-# define _ALL_SOURCE 1
-#endif
-/* Enable GNU extensions on systems that have them.  */
-#ifndef _GNU_SOURCE
-# define _GNU_SOURCE 1
-#endif
-/* Enable threading extensions on Solaris.  */
-#ifndef _POSIX_PTHREAD_SEMANTICS
-# define _POSIX_PTHREAD_SEMANTICS 1
-#endif
-/* Enable extensions on HP NonStop.  */
-#ifndef _TANDEM_SOURCE
-# define _TANDEM_SOURCE 1
-#endif
-/* Enable general extensions on Solaris.  */
-#ifndef __EXTENSIONS__
-# define __EXTENSIONS__ 1
-#endif
-
-
 /* Define to 1 if you want getc etc. to use unlocked I/O if available.
    Unlocked I/O can improve performance in unithreaded apps, but it is not
    safe for multithreaded apps. */
@@ -1533,25 +1506,24 @@
 /* Define if sys/ptem.h is required for struct winsize. */
 /* #undef WINSIZE_IN_PTEM */
 
-/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
-   significant byte first (like Motorola and SPARC, unlike Intel). */
-#if defined AC_APPLE_UNIVERSAL_BUILD
-# if defined __BIG_ENDIAN__
-#  define WORDS_BIGENDIAN 1
-# endif
-#else
-# ifndef WORDS_BIGENDIAN
-/* #  undef WORDS_BIGENDIAN */
-# endif
-#endif
+/* Define to 1 if your processor stores words with the most significant byte
+   first (like Motorola and SPARC, unlike Intel and VAX). */
+/* #undef WORDS_BIGENDIAN */
 
-/* Enable large inode numbers on Mac OS X 10.5.  */
-#ifndef _DARWIN_USE_64_BIT_INODE
-# define _DARWIN_USE_64_BIT_INODE 1
+/* Define to 1 if on AIX 3.
+   System headers sometimes define this.
+   We just want to avoid a redefinition error message.  */
+#ifndef _ALL_SOURCE
+/* # undef _ALL_SOURCE */
 #endif
 
 /* Number of bits in a file offset, on hosts where this is settable. */
 /* #undef _FILE_OFFSET_BITS */
+
+/* Enable GNU extensions on systems that have them.  */
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE 1
+#endif
 
 /* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
 /* #undef _LARGEFILE_SOURCE */
