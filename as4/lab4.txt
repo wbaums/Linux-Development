@@ -1,2 +1,12 @@
 William Baumbacher
 lab 4 log
+
+I begin by downloading the tar file "coreutils-with-bug.tar" onto my computer.
+I make it into a folder and add it into my lab 4 directory using cyberduck.
+Then I navigate into the directory coreutils-with-bug and try to configure:
+     $ ./configure
+Permission is denied so I have to change the permissions to allow execution:
+     $ chmod u+x configure
+Now I configure and try to make, make install:
+    $ ./configure
+    $ make
