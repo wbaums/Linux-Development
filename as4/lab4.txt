@@ -1,4 +1,4 @@
-William Baumbacher
+=William Baumbacher
 lab 4 log
 
 I begin by downloading the coreutils tar to my directory:
@@ -51,7 +51,91 @@ Now I want to reproduce the problem. To do this I run the code given in the spec
 -rw-r--r-- 1 classwba class 0 2020-02-09 04:08:43.464513143 +0000 now
     $ cd
     $ rm -fr $tmp
-We can see the bug from the output above. The -t tag should sort files by time last
+We can see the bug from the output above. The -t tag should sort files by time
 modified, most recent first, but the output reversed the order, printing the oldest
 files first.
 
+Now I go to the coreutils directory in order to find the bug in the code.
+    $ cd coreutils/src/
+    $ gdb ls
+Now I need to figure out how to best go through the code, so I use the help command:
+    (gdb) help
+I use the following command to see if I can find a function that might cause
+the issue:
+    (gdb) info functions
+I find a function called compare_mtime and I decide to inspect it:
+  (gdb) break compare_mtimec
+  (gdb) rn -lt --full-time
+  (gdb) layout next
+I repeat the layout next command until I have the visual with the source code shown
+above the assembly code.
+static int compare_mtime (V a, V b) { return cmp_mtime (a, b, xstrcoll); }
+I notice that the compare_mtime functins returns another function: cmp_mtime
+I set a breakpoint at this function so I can go through it as well:
+  (gdb) break cmp_mtime
+Continuing on with the stepi command I arrive at the function timespec_cmp
+which contains the following lines:
+
+int diff = a.tv_sec - b.tv_sec;
+return diff ? diff : a.tv_nsec - b.tv_nsec;
+
+This is the code that causes the problem. If b.tv_nsec is much larger than a.tv_nsec,
+the resulting value will underflow and the value that should be negative will
+instead be positive. In the example from earlier, wwi-armistice-cs35L was old enough
+to cause negative overflow which is why the files were printed in the wrong order.
+
+In order to fix this I copy timspec.h into a new file that I will edit to create the
+diff. I find the function:
+      $ C-s timespec_cmp
+The best way to avoid overflow in the function is to never subtract at all. Instead,
+I will use comparison operators and return 1,0,-1 depending on the result. I replace
+the return statement in timespec_cmp with the following code:
+
+    if (a.tv_sec == b.tv_sec) {return 0;}
+    else if (a.tv_sec < b.tv_sec) {return -1;}
+    else {return 1;}
+Now I need to create the diff file from /lib/timespec.h and timespec.h:
+    $ diff -u coreutils-with-bug/lib/timespec.h coreutils-with-bug/timespec.h > lab4.diff
+I open lab4.diff and create the change log:
+  $ emacs lab4.diff
+  $ C-x 4 a
+I type out a description for the change log and then manually copy and paste the changelog
+into the top of lab4.diff. I also change the paths so that they correspond to the correct
+file. 
+Now I use lab4.diff to run the patch:
+    $ patch -p0 < lab4.diff
+The patch is successful. I remake and install this updated version:
+    $ make
+    $ make install
+Now I test the patch using the same process as before:
+    $ tmp=$(mktemp -d)
+    $ cd $tmp
+    $ touch -d '1918-11-11 11:00 GMT' wwi-armistice-cs35L
+    $ touch now
+    $ sleep 1
+    $ touch now1
+    $ TZ=UTC0 /u/eng/class/classwba/Documents/35l/as4/coreutils-with-bug/src/ls
+    -lt --full-time wwi-armistice-cs35L now now1
+
+-rw-r--r-- 1 classwba class 0 2020-02-09 08:11:49.548265759 +0000 now1
+-rw-r--r-- 1 classwba class 0 2020-02-09 08:11:40.746111393 +0000 now
+-rw-r--r-- 1 classwba class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice-cs35L
+    $ cd
+    rm -fr $tmp
+We can see that wwi-armistice-cs35L was printed last and therefore the patch was
+successful.
+
+Now I try to reproduce this problem in my SEASnet home directory:
+    $ cd ~
+    $ touch -d '1918-11-11 11:00 GMT' wwi-armistice-cs35L
+    $ touch now
+    $ sleep 1
+    $ touch now1
+    $ TZ=UTC0 ls -lt --full-time wwi-armistice-cs35L now now1
+
+-rw-r--r-- 1 classwba class 0 2054-12-17 17:28:16.000000000 +0000 wwi-armistice-cs35L
+-rw-r--r-- 1 classwba class 0 2020-02-09 08:20:10.386179000 +0000 now1
+-rw-r--r-- 1 classwba class 0 2020-02-09 08:20:00.940281000 +0000 now
+
+SEASnet does not do well. It prints the files in the incorrect order just like the bug
+did earlier. 

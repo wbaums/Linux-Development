@@ -42,7 +42,7 @@ whoami.o: whoami.c /usr/include/stdc-predef.h ../config.h \
  /usr/include/bits/fcntl.h /usr/include/bits/fcntl-linux.h \
  /usr/include/bits/uio.h /usr/include/linux/falloc.h \
  /usr/include/dirent.h /usr/include/bits/dirent.h ../lib/stat-macros.h \
- ../lib/timespec.h /usr/include/inttypes.h \
+ ../timespec.h /usr/include/inttypes.h \
  /usr/local/cs/gcc-9.2.0/lib/gcc/x86_64-pc-linux-gnu/9.2.0/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/wchar.h /usr/include/ctype.h \
  /usr/include/locale.h /usr/include/bits/locale.h ../lib/gettext.h \
@@ -230,7 +230,7 @@ localedir.h:
 
 ../lib/stat-macros.h:
 
-../lib/timespec.h:
+../timespec.h:
 
 /usr/include/inttypes.h:
 
