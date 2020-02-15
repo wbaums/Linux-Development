@@ -10,4 +10,183 @@ arguments. I need to use the following structure:
 int main(int argc, char **argv
 where argc is the number of operands and argv is a pointer to the operands.
 
+I implement a function checkInputs() which checks for valid input arguments, and then I
+implement the main function and transliterate bytes using getchar() and putchar().
 
+For tr2u.c I use almost the same program, but instead of using getchar() and putchar(), I
+use read() and write().
+
+I compile the programs:
+  $ gcc -O2 tr2b.c
+  $ gcc -O2 tr2u.c
+
+And then I test their basic functionality by giving invalid inputs and then testing the
+transliteration:
+  $ ./a.out "a"
+Error: too few operands.
+  $ ./a.out "ab" "def"
+Error: operands have different lengths
+  $ ./a.out "abc" "def"
+Which performs as expected.
+
+Now I need to test the two functions using strace and a file that is at least 5000000 bytes
+long. I check piazza for tips on how to create a file like this and find the following:
+
+; define valid chars and how many to choose
+(setq letters "abcdefghijklmnopqrstuvwxyz")
+(setq charcount 5000000)
+
+; create new buffer called "bigfile"
+(setq mybuff "bigfile")
+(generate-new-buffer mybuff)
+
+; helper funcs
+(defun randchar (charset)
+	; get random char from string (charset)
+	(setq rand (random (length charset)))
+	(substring charset rand (1+ rand)))
+(defun insertto (buffer text)
+	; append string (text) to buffer (buffer)
+	(with-current-buffer buffer
+		(insert text)))
+
+; main loop: insert (charcount) random letters from (letters) into the new buffer *bigfile* and print "done" when finished
+(dotimes (i charcount "done")
+	(insertto mybuff (randchar letters)))
+
+I add this to a buffer called bigfile and then run it using:
+  M-x eval-buffer
+This works and prints 5000000 random characters into my file. 
+Now I test both programs using the strace command:
+
+    $ gcc -O2 tr2b.c
+    $ mv a.out tr2b
+    $ gcc O2 tr2u.c
+    $ mv a.out tr2u
+Now I check the man page of strace to see what tags I may need. I need -c which counts time,
+calls, errors and prints a summary when the program exits. 
+
+I run the first strace:
+  $ strace -c ./tr2b "abc" "def" < bigfile.txt > outb
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 53.12    0.002854           5       611           write
+ 38.32    0.002059           3       613           read
+  4.43    0.000238          26         9           mmap
+  1.12    0.000060          15         4           mprotect
+  0.89    0.000048          12         4           fstat
+  0.54    0.000029          15         2           open
+  0.39    0.000021          11         2           close
+  0.32    0.000017          17         1           munmap
+  0.28    0.000015          15         1         1 access
+  0.22    0.000012          12         1           execve
+  0.19    0.000010          10         1           brk
+  0.19    0.000010          10         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.005373                  1250         1 total
+
+I run the second strace:
+
+  $ strace -c ./tr2u "a" "b" < bigfile.txt > outu
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 56.68   16.031392           3   5000000           write
+ 43.32   12.251308           2   5000002           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         2           fstat
+  0.00    0.000000           0         7           mmap
+  0.00    0.000000           0         4           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   28.282700              10000024         1 total
+
+tr2u.c uses far more system calls that tr2b. This is because tr2u.c uses a system call
+for every instance of translation, so the total number of system calls is far larger than
+for tr2b.c. tr2b.c uses buffered output because it uses putchar and therefore runs
+faster and uses less calls.
+
+Now I will test both calls copying the files to terminal rather than to a separate file:
+
+    $ strace -c ./tr2b "abc" "def" < bigfile.txt
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 92.40    0.016513           3      4883           write
+  7.60    0.001359           2       613           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         4           fstat
+  0.00    0.000000           0         9           mmap
+  0.00    0.000000           0         4           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.017872                  5522         1 total
+
+    $ strace -c ./tr2u "abc" "def" < bigfile.txt
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 58.40   19.746120           4   5000000           write
+ 41.60   14.063348           3   5000002           read
+  0.00    0.000028           4         7           mmap
+  0.00    0.000023           6         4           mprotect
+  0.00    0.000011           6         2           open
+  0.00    0.000008           8         1           munmap
+  0.00    0.000006           3         2           fstat
+  0.00    0.000005           5         1         1 access
+  0.00    0.000004           2         2           close
+  0.00    0.000004           4         1           execve
+  0.00    0.000002           2         1           brk
+  0.00    0.000002           2         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   33.809561              10000024         1 total
+
+For tr2b.c, the program now has to print to terminal instead of to stdout, which results in
+far more system calls (5500 now as opposed to 1000 previously). tr2u.c on the other hand uses
+exaclty the same number of system calls because it using read and write. It was executing a
+system call for every tranlation, so nothing changed when it outputed to terminal instead
+of a file. 
+
+Now I use the time command to compare the program speeds:
+
+    $ time ./tr2b "abc" "def" < bigfile.txt > outb
+
+real	0m0.162s
+user	0m0.106s
+sys	0m0.006s
+
+    $ time ./tr2u "abc" "def" < bigfile.txt > outu
+
+real	0m13.673s
+user	0m3.203s
+sys	0m10.417s
+
+    $ time ./tr2b "abc" "def" < bigfile.txt
+
+real	0m0.389s
+user	0m0.137s
+sys	0m0.030s
+
+    $ time ./tr2u "abc" "def" < bigfile.txt
+
+real	0m13.058s
+user	0m3.103s
+sys	0m9.926s
+
+Again, we can see that the tr2b.c program is much faster than the tr2u.c program because of
+its use of a buffer. 
+
+____________________________________________
+	Homework: Encrypted Sort Revisited
+____________________________________________
