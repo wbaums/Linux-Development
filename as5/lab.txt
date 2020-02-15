@@ -1,0 +1,13 @@
+Lab.txt
+Will Baumbacher
+
+First I have to write a program tr2b.c that transliterates bytes using getchar
+and putchar. The implementation is supposed to be a main program that takes two
+operands "from" and "two" that are byte strings of the same length.
+
+First I need to figure out how to organize the main function to take these
+arguments. I need to use the following structure:
+int main(int argc, char **argv
+where argc is the number of operands and argv is a pointer to the operands.
+
+
