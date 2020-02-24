@@ -1,0 +1,175 @@
+assignment 6
+
+Laboratory: Who's linked to what?
+
+1. First I download the program simpgmp.c from the spec:
+   $ wget http://web.cs.ucla.edu/classes/winter20/cs35L/assign/simpgmp.c
+Now I compile the program. I need to use the linker flag -lgmp beccause
+the simpgmp.c uses GMP:
+   $ gcc simpgmp.c -o simpgmp -lgmp
+
+2. Now I want to use the program to compute 2**24 (2^24), and
+2^(2^24)
+
+   $ ./simpgmp 24
+16777216
+
+2^(2^24) will be so large that I input it into a file instead so I can
+more easily check its length:
+
+   $ ./simpgmp 16777216 > twopow.txt
+   $ wc twopow.txt
+1       1 5050447 twopow.txt
+The number is one greater because emacs added a newline character at
+the end.
+The resulting answer has the correct number of digits: 5,050,446. 
+    $ emacs twopow.txt
+Now I manually check the start and end. The file correctly begins with
+1818, and ends with 7536.
+
+3. I start by checking what the ldd command does:
+   $ man ldd
+ldd [OPTION]... FILE...
+ldd prints the shared libraries required by each program or shared
+library specified on the command line.
+   $ ldd ./simpgmp 24
+./simpgmp:
+	linux-vdso.so.1 =>  (0x00007ffc0cdb7000)
+	libgmp.so.10 => /lib64/libgmp.so.10 (0x00007f674f1db000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007f674ee0d000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f674f453000)
+
+4. Now I check the system calls of ./simpgmp.
+   $ strace -c ./simpgmp 24
+16777216
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 27.59    0.000056           9         6           mprotect
+ 27.09    0.000055           6        10           mmap
+  9.85    0.000020           7         3           open
+  6.90    0.000014          14         1           munmap
+  6.90    0.000014           4         4           brk
+  5.91    0.000012           3         4           fstat
+  4.93    0.000010           5         2           read
+  4.93    0.000010          10         1           write
+  3.94    0.000008           3         3           close
+  1.97    0.000004           4         1           arch_prctl
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000203                    37         1 total
+
+There are several calls here that are related to dynamic linking.
+
+syscall "open" is used to open a dynamic linking library
+syscall "close" is used to close a dynamic linking library
+syscall "mmap" is used to map or unmap files or devices into memory
+
+5. I run the following command where nnnnnnnnn is my student id.
+“ls /usr/bin | awk '(NR-nnnnnnnnn)%251 == 0'”
+   $ ls /usr/bin | awk '(NR-204915304)%251 == 0'
+bond2team
+dbiproxy
+gcov44
+haddock
+kgpgconf
+mapscrn
+opimport
+pf2afm
+ppm3d
+rpmdev-sha256
+systemd-notify
+xdg-open
+
+6. I invoke ldd on each command from the above list:
+   $ ldd /usr/bin/bond2team
+not a dynamic executable
+
+   $ ldd /usr/bin/dbiproxy
+not a dynamic executable
+
+   $ ldd /usr/bin/gcov44
+linux-vdso.so.1 =>  (0x00007fff93e9b000)
+libc.so.6 => /lib64/libc.so.6 (0x00007f5e9377a000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f5e93b48000)
+
+   $ ldd /usr/bin/haddock
+not a dynamic executable
+
+   $ ldd /usr/bin/kpngconf
+ldd: /usr/bin/kpngconf: No such file or directory
+
+   $ ldd /usr/bin/mapscrn
+linux-vdso.so.1 =>  (0x00007ffd7c4fb000)
+libc.so.6 => /lib64/libc.so.6 (0x00007fdcb2b15000)
+/lib64/ld-linux-x86-64.so.2 (0x00007fdcb2ee3000)
+
+   $ ldd /usr/bin/opimport
+linux-vdso.so.1 =>  (0x00007ffd468d2000)
+libpopt.so.0 => /lib64/libpopt.so.0 (0x00007f2ee918a000)
+libdl.so.2 => /lib64/libdl.so.2 (0x00007f2ee8f86000)
+libstdc++.so.6 => /lib64/libstdc++.so.6 (0x00007f2ee8c7f000)
+libm.so.6 => /lib64/libm.so.6 (0x00007f2ee897d000)
+libgcc_s.so.1 => /lib64/libgcc_s.so.1 (0x00007f2ee8767000)
+libc.so.6 => /lib64/libc.so.6 (0x00007f2ee8399000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f2ee9394000)
+
+   $ ldd /usr/bin/pf2afm
+not a dynamic executable
+
+   $ ldd /usr/bin/ppm3d
+linux-vdso.so.1 =>  (0x00007ffcb53cc000)
+libnetpbm.so.11 => /lib64/libnetpbm.so.11 (0x00007ff36124f000)
+libm.so.6 => /lib64/libm.so.6 (0x00007ff360f4d000)
+libc.so.6 => /lib64/libc.so.6 (0x00007ff360b7f000)
+/lib64/ld-linux-x86-64.so.2 (0x00007ff36148f000)
+
+   $ ldd /usr/bin/rpmdev-sha256
+not a dynamic executable
+
+   $ ldd /usr/bin/systemd-notify
+linux-vdso.so.1 =>  (0x00007ffe8ba47000)
+librt.so.1 => /lib64/librt.so.1 (0x00007f3e214c2000)
+libgcc_s.so.1 => /lib64/libgcc_s.so.1 (0x00007f3e212ac000)
+libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f3e21090000)
+libc.so.6 => /lib64/libc.so.6 (0x00007f3e20cc2000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f3e218d6000)
+
+   $ ldd /usr/bin/xdg-open
+not a dynamic executable
+
+7. To get a sorted dynamic list of every dynamic library used by the
+commands in my list. I create a file "libs.txt".
+   $ emacs syscall.txt
+I add all of the dynamic libraries into it in no particular order.
+Now I sort the lines of "libs.txt":
+   $ sort -u libs.txt > tmp.txt
+   $ rm libs.txt
+   $ mv tmp.txt libs.txt
+The contents of libs.txt is:
+
+/lib64/ld-linux-x86-64.so.2 (0x00007f2ee9394000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f3e218d6000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f5e93b48000)
+/lib64/ld-linux-x86-64.so.2 (0x00007fdcb2ee3000)
+/lib64/ld-linux-x86-64.so.2 (0x00007ff36148f000)
+libc.so.6 => /lib64/libc.so.6 (0x00007f2ee8399000)
+libc.so.6 => /lib64/libc.so.6 (0x00007f3e20cc2000)
+libc.so.6 => /lib64/libc.so.6 (0x00007f5e9377a000)
+libc.so.6 => /lib64/libc.so.6 (0x00007fdcb2b15000)
+libc.so.6 => /lib64/libc.so.6 (0x00007ff360b7f000)
+libdl.so.2 => /lib64/libdl.so.2 (0x00007f2ee8f86000)
+libgcc_s.so.1 => /lib64/libgcc_s.so.1 (0x00007f2ee8767000)
+libgcc_s.so.1 => /lib64/libgcc_s.so.1 (0x00007f3e212ac000)
+libm.so.6 => /lib64/libm.so.6 (0x00007f2ee897d000)
+libm.so.6 => /lib64/libm.so.6 (0x00007ff360f4d000)
+libnetpbm.so.11 => /lib64/libnetpbm.so.11 (0x00007ff36124f000)
+libpopt.so.0 => /lib64/libpopt.so.0 (0x00007f2ee918a000)
+libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f3e21090000)
+librt.so.1 => /lib64/librt.so.1 (0x00007f3e214c2000)
+libstdc++.so.6 => /lib64/libstdc++.so.6 (0x00007f2ee8c7f000)
+linux-vdso.so.1 =>  (0x00007ffcb53cc000)
+linux-vdso.so.1 =>  (0x00007ffd468d2000)
+linux-vdso.so.1 =>  (0x00007ffd7c4fb000)
+linux-vdso.so.1 =>  (0x00007ffe8ba47000)
+linux-vdso.so.1 =>  (0x00007fff93e9b000)
