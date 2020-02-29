@@ -1,0 +1,8 @@
+lab7.txt
+Will Baumbacher
+
+1.
+I start by getting a copy of the Diffutils repository from the file
+~eggert/src/gnu/diffutils:
+  $ git clone ~eggert/src/gnu/diffutils
+  
