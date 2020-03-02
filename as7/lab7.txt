@@ -242,8 +242,56 @@ modified:   src/sdiff.c
 modified:   src/util.c
 I check the length of the diff:
    $ git diff | wc -l
-which outputs 326. I create the patch:
+which outputs 335. I create the patch:
    $ git diff > quote-3.0-patch.txt
 
 13.
+Now I build the resulting modified version of Diffutils. I follow the instructions
+in README-hacking
+First I check my current version to see if I need to install the additional patch:
+   $ gcc --version
+gcc (GCC) 9.2.0
+This is later than version 2.16 so I need to install the additional patch.
+I copy and paste the patch into a file get-patch.txt
+   $ ./bootstrap
+   $ patch -p0 < get-patch.txt
+   $ ./configure
+   $ make
+   $ make check
 
+Now I check that Diffutils does the right thing with the “diff . -” scenario, as well
+as with “diff --help”.
+   $ ./src/diff . -
+./src/diff: cannot compare '-' to a directory
+   $ ./src/diff --help
+This also verifies that Diffutils behaves properly.
+
+14.
+Do a sanity test using the modified version of Diffutils that you just built.
+I check the old version of diffutils vs. the original.
+I clone the original version into diffutils-3.0
+   $ git clone ~eggert/src/gnu/diffutils diffutils-3.0
+
+I rename the original diffutils-3.0-patch:
+   $ mv diffutils diffutils-3.0-patch
+
+I run my implementation of diff with the command “D/diff -pru diffutils-3.0
+diffutils-3.0-patch >quote-3.0-test.txt”
+   $ ./diffutils-3.0-patch/src/diff -pru diffutils-3.0 diffutils-3.0-patch
+   > quote-3.0-test.txt
+
+15.
+I use diff to compare the contents of quote-3.0-test.txt and quote-3.0-patch.txt.
+   $ diff quote-3.0-test.txt diffutils-3.0-patch/quote-3.0-patch.txt > diff.txt
+   $ emacs diff.txt
+   $ wc -l diff.txt
+9454 diff.txt  
+
+The diff.txt file is quite long, so I emacs into the file to check out the
+differences. There are significant numbers of differences, but when looking many of
+them appear to be trivial. For example the copy write changes:
+-Copyright (C) 2001, 2006, 2009-2013, 2015-2017 Free Software Foundation, Inc.
++Copyright (C) 2001, 2006, 2009-2010 Free Software Foundation, Inc.
+
+While the files are absolutely not identical, the differences between the two files
+are not particularly significant.
